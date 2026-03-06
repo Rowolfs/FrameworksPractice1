@@ -1,0 +1,6 @@
+@FrameworksPractice1_HostAddress = http://localhost:5122
+
+GET {{FrameworksPractice1_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
