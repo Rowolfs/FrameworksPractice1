@@ -1,55 +1,30 @@
-# FrameworksPractice1
+# ASP.NET Core Minimal API — Middleware Practice
 
-Мини-веб-служба на **ASP.NET Core Minimal API** для практической работы по дисциплине **«Технологии разработки приложений на базе фреймворков»**.
+University coursework exploring request middleware, dependency injection, validation, and an in-memory item repository.
 
-Проект демонстрирует:
+## What it demonstrates
 
-- построение **конвейера обработки запросов** через middleware;
-- работу с **Minimal API**;
-- хранение данных **в памяти процесса**;
-- единый формат ошибок;
-- валидацию входных данных;
-- базовую архитектуру с разделением на **Domain / Services / Middlewares / Errors**.
+- Creating and retrieving items with GUID identifiers, names and prices.
+- Request identifiers, timing/logging middleware and centralized error handling.
+- Domain exceptions and a thread-safe in-memory repository.
 
-## О проекте
+## Run
 
-Приложение реализует простой API для работы с сущностью **Item**.
+Requires the .NET 8 SDK. From the repository root:
 
-Модель элемента:
+```sh
+dotnet restore FrameworksPractice1.sln
+dotnet run --project FrameworksPractice1 -- --urls http://localhost:5000
+```
 
-- `Id: Guid`
-- `Name: string`
-- `Price: decimal`
+```sh
+curl -X POST http://localhost:5000/api/items -H "Content-Type: application/json" -d '{"name":"Notebook","price":12.50}'
+```
 
-Данные сохраняются в **in-memory** репозитории на базе `ConcurrentDictionary`, то есть без базы данных. Это соответствует формату учебного задания, где требуется небольшая веб-служба с хранением данных в памяти процесса. :contentReference[oaicite:2]{index=2} :contentReference[oaicite:3]{index=3}
+Read the returned item with `GET /api/items/{id}`. Empty names and negative prices produce validation errors. Data is lost when the process stops.
 
-## Стек
+## Structure
 
-- **C#**
-- **.NET / ASP.NET Core Minimal API**
-- **Middleware pipeline**
-- **In-memory repository**
-- **System.Text.Json**
+`Domain/` contains models, `Services/` implements storage, `Middlewares/` handles requests, and `Errors/` defines domain exceptions; all are under `FrameworksPractice1/`.
 
-## Структура проекта
-
-```text
-FrameworksPractice1/
-├── Domain/
-│   ├── CreateItemRequest.cs
-│   ├── ErrorResponse.cs
-│   └── Item.cs
-├── Errors/
-│   ├── DomainException.cs
-│   ├── NotFoundException.cs
-│   └── ValidationException.cs
-├── Middlewares/
-│   ├── ErrorHandlingMiddleware.cs
-│   ├── RequestIdMiddleware.cs
-│   └── TimingAndLogMiddleware.cs
-├── Services/
-│   ├── InMemoryItemRepository.cs
-│   ├── ItemRepository.cs
-│   └── RequestId.cs
-├── Program.cs
-└── appsettings.json
+The project file references `properties/launchSettings.json`, while the tracked directory is `Properties/`. Correct that casing if building on a case-sensitive filesystem. This is a learning project, with no persistent database or authentication layer.
